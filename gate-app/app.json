@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Rangrez 3.0",
+    "slug": "rangrez-3",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "icon": "./assets/logo.png",
+    "android": {
+      "package": "com.rangrez.gate",
+      "permissions": [
+        "CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#16112A"
+      }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Camera is needed to scan entry QR codes."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b97e8811-3a52-4e26-8330-eec61d3c9022"
+      }
+    }
+  }
+}
