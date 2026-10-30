@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex"><title>Rangrez 3.0 sender</title>
+<style>
+:root{--ink:#16112A;--card:#241C3D;--line:#3A2F5C;--text:#F7F2FF;--dim:#A89CC8;--gold:#F5A524;--wa:#25D366}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);font:16px system-ui,sans-serif;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
+h1{margin:0;color:var(--gold);font-size:22px}.dim{color:var(--dim);font-size:13px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:10px 0}.bar i{display:block;height:6px;width:0;background:var(--wa);border-radius:3px}
+input{width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:16px;margin-bottom:10px}
+.tabs{display:flex;gap:8px;margin-bottom:6px}.tabs button{border:0;border-radius:20px;padding:8px 14px;background:var(--card);color:var(--dim);font-weight:700;font-size:14px}.tabs .on{background:var(--gold);color:var(--ink)}
+.row{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line)}.row b{display:block}
+.wa{margin-left:auto;padding:11px 15px;border-radius:10px;background:var(--wa);color:#073B1B;font-weight:800;text-decoration:none;white-space:nowrap}
+.sent{margin-left:auto;text-align:right;color:#6EE7A1;font-weight:700;font-size:14px}.sent a{display:block;color:var(--dim);font-weight:400;font-size:12px;margin-top:2px}
+.warn{background:#B7791F;padding:10px;border-radius:10px;margin:10px 0;font-size:14px}
+</style></head><body>
+<h1>Rangrez 3.0 sender</h1><div class="dim" id="sub"></div><div class="bar"><i id="fill"></i></div>
+<div class="warn" id="warn" hidden>Ye page file se khula hai. Hosted link se kholo, warna pass ka link galat banega.</div>
+<input id="q" placeholder="Search name" autocomplete="off">
+<div class="tabs"><button data-f="todo" class="on">Pending</button><button data-f="done">Sent</button><button data-f="all">All</button></div>
+<div id="list"></div>
+<script>
+const D=/*DATA*/null,KEY='rz_'+D.id;
+const $=id=>document.getElementById(id);
+let sent={},f='todo';
+try{sent=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(sent))}catch(e){}};
+const base=location.href.replace(/[#?].*$/,'').replace(/[^\/]*$/,'');
+if(location.protocol==='file:')$('warn').hidden=false;
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+function link(s){
+  const first=s.name.split(' ')[0];
+  const pass=base+'#t='+s.token+'&n='+encodeURIComponent(s.name);
+  // const msg='Hi '+first+', Rangrez 3.0 team se. Dandiya Night 2026 ka aapka entry pass:\n'+pass+'\nGate par ye QR dikhayein. Ek QR se sirf ek baar entry hogi, kisi ko share na karein.';
+  
+
+const msg='Hi '+first+', greetings from the RANGREZ 3.0 Team! ❤️✨ Your official entry pass for Dandiya Night 2026:\n'+pass+'\nPlease show this QR code at the gate. Each QR code is valid for one-time entry only. Kindly do not share it with anyone. Please save this message or take a screenshot of the QR code to ensure a smooth entry.\nGet ready to celebrate! See you at RANGREZ 3.0! 💃🪘';
+
+
+  return 'https://wa.me/'+s.mobile+'?text='+encodeURIComponent(msg);
+}
+function draw(){
+  const t=$('q').value.trim().toLowerCase(),done=D.students.filter(s=>sent[s.uid]).length;
+  $('sub').textContent='Volunteer '+D.n+' of '+D.total+': '+done+' of '+D.students.length+' sent';
+  $('fill').style.width=(done/D.students.length*100)+'%';
+  const box=$('list');box.textContent='';
+  D.students.filter(s=>(f==='all'||(f==='done')===!!sent[s.uid])&&(!t||s.name.toLowerCase().includes(t))).forEach(s=>{
+    const r=el('div','row'),i=el('div');
+    i.append(el('b',0,s.name),el('span','dim',s.mobile?'+'+s.mobile.slice(0,2)+' xxxxxx'+s.mobile.slice(-4):'no number'));
+    r.append(i);
+    if(!s.mobile)r.append(el('span','dim','No number'));
+    else if(sent[s.uid]){
+      const w=el('div','sent','Sent ✓'),a=el('a',0,'Resend'),u=el('a',0,'Undo');
+      a.href=link(s);u.href='#';u.onclick=e=>{e.preventDefault();delete sent[s.uid];save();draw()};
+      w.append(a,u);r.append(w);
+    }else{
+      const a=el('a','wa','WhatsApp');a.href=link(s);
+      a.onclick=()=>{sent[s.uid]=Date.now();save();setTimeout(draw,600)};r.append(a);
+    }
+    box.append(r);
+  });
+}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  f=b.dataset.f;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));draw();
+});
+$('q').oninput=draw;document.addEventListener('visibilitychange',draw);draw();
+</script></body></html>

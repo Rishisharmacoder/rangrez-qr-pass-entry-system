@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# local credentials
+.env
+.env.*
+!.env.example
+
+# attendee data and generated entry passes
+*.xlsx
+tokens.csv
+qr/
+site/
+volunteers.txt
+
+# logs and operating-system files
+npm-debug.log*
+yarn-debug.log*
+.DS_Store
+Thumbs.db
+Desktop.ini
